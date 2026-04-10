@@ -2,11 +2,97 @@ import init, { Ruler } from './pkg/ruler.js';
 
 // ── PPI calculation ─────────────────────────────────────────────────────────
 // CSS pixel PPI = √(cssW² + cssH²) / diagonalInches
-// This is correct across devicePixelRatio because canvas & CSS work in logical px.
+// Correct across all devicePixelRatio values because canvas & CSS use logical px.
 function calcPPI(diagonalInches) {
   const w = window.screen.width;
   const h = window.screen.height;
   return Math.sqrt(w * w + h * h) / diagonalInches;
+}
+
+// ── Auto-detect screen size ──────────────────────────────────────────────────
+// Match physical pixel dimensions (screen.width × dpr, screen.height × dpr)
+// against a database of known devices to infer the physical diagonal.
+function autoDetect() {
+  const dpr  = window.devicePixelRatio || 1;
+  const pW   = Math.round(Math.max(screen.width, screen.height) * dpr);
+  const pH   = Math.round(Math.min(screen.width, screen.height) * dpr);
+
+  // [physW, physH, diagonalInches, label]  (always portrait orientation: W ≥ H)
+  const DB = [
+    // ── iPhones ───────────────────────────────────────────────────────────
+    [2796, 1290, 6.7,  'iPhone 15 Pro Max'],
+    [2556, 1179, 6.1,  'iPhone 15 / 15 Pro'],
+    [2778, 1284, 6.7,  'iPhone 14 Plus / 13 Pro Max'],
+    [2532, 1170, 6.1,  'iPhone 14 / 13 / 12 Pro'],
+    [2340, 1080, 6.1,  'iPhone 11'],
+    [1792,  828, 6.1,  'iPhone XR / 11'],
+    [2688, 1242, 6.5,  'iPhone XS Max / 11 Pro Max'],
+    [2436, 1125, 5.8,  'iPhone X / XS / 11 Pro'],
+    [1920, 1080, 5.5,  'iPhone 6+ / 7+ / 8+'],
+    [1334,  750, 4.7,  'iPhone 6 / 7 / 8 / SE 2'],
+    [1136,  640, 4.0,  'iPhone SE 1st gen'],
+    // ── iPads ─────────────────────────────────────────────────────────────
+    [2752, 2064, 11,   'iPad Pro 11"'],
+    [2732, 2048, 12.9, 'iPad Pro 12.9"'],
+    [2388, 1668, 11,   'iPad Pro 11" (gen 1–2)'],
+    [2360, 1640, 10.9, 'iPad Air 4/5'],
+    [2266, 1488, 8.3,  'iPad mini 6'],
+    [2160, 1620, 10.2, 'iPad 9/10'],
+    [2048, 1536, 9.7,  'iPad 9.7"'],
+    // ── MacBooks ──────────────────────────────────────────────────────────
+    [3456, 2234, 16,   'MacBook Pro 16"'],
+    [3024, 1964, 14,   'MacBook Pro 14"'],
+    [2560, 1664, 13.6, 'MacBook Air M2 13"'],
+    [2560, 1600, 13.3, 'MacBook Pro / Air 13"'],
+    [2304, 1440, 12,   'MacBook 12"'],
+    // ── iMac / Studio Display ─────────────────────────────────────────────
+    [5120, 2880, 27,   'iMac 27" / 5K display'],
+    [4480, 2520, 24,   'iMac 24"'],
+    // ── Windows laptops ───────────────────────────────────────────────────
+    [2880, 1800, 15.6, 'Laptop 15.6" QHD+'],
+    [2560, 1600, 16,   'Laptop 16" QHD'],
+    [1920, 1200, 14,   'Laptop 14" FHD+'],
+    [1920, 1080, 15.6, 'Laptop 15.6" FHD'],
+    [1366,  768, 13.3, 'Laptop 13.3" HD'],
+    // ── Common desktop monitors ───────────────────────────────────────────
+    [3840, 2160, 32,   'Monitor 32" 4K'],
+    [3840, 2160, 27,   'Monitor 27" 4K'],
+    [2560, 1440, 27,   'Monitor 27" QHD'],
+    [3440, 1440, 34,   'Ultrawide 34"'],
+    [2560, 1080, 25,   'Ultrawide 25"'],
+    [1920, 1200, 24,   'Monitor 24" WUXGA'],
+    [1920, 1080, 24,   'Monitor 24" FHD'],
+    [1920, 1080, 22,   'Monitor 22" FHD'],
+    // ── Android phones ────────────────────────────────────────────────────
+    [3200, 1440, 6.9,  'Android phone QHD+'],
+    [2400, 1080, 6.5,  'Android phone FHD+'],
+    [2340, 1080, 6.4,  'Android phone FHD+'],
+    [2160, 1080, 6.0,  'Android phone 18:9'],
+    [1600,  720, 6.5,  'Android phone HD+'],
+    // ── Android tablets ───────────────────────────────────────────────────
+    [2560, 1600, 10.1, 'Android tablet 10"'],
+    [2000, 1200, 10.4, 'Android tablet 10.4"'],
+    [1920, 1200, 10.1, 'Android tablet 10.1"'],
+  ];
+
+  for (const [w, h, diag, label] of DB) {
+    if (Math.abs(w - pW) <= 20 && Math.abs(h - pH) <= 20) {
+      return { ppi: calcPPI(diag), label: `${label} · auto` };
+    }
+  }
+
+  // ── Heuristic fallback ───────────────────────────────────────────────────
+  const cssW = screen.width;
+  const isMobileUA = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isTouch    = navigator.maxTouchPoints > 1;
+
+  if ((isMobileUA || isTouch) && cssW <= 450)  return { ppi: calcPPI(6.1),  label: 'phone ~6" · estimated' };
+  if ((isMobileUA || isTouch) && cssW <= 900)  return { ppi: calcPPI(10.9), label: 'tablet ~11" · estimated' };
+  if (cssW >= 2560 && dpr >= 2)                return { ppi: calcPPI(27),   label: '4K monitor · estimated' };
+  if (cssW >= 1920)                            return { ppi: calcPPI(24),   label: 'monitor ~24" · estimated' };
+  if (cssW >= 1440)                            return { ppi: calcPPI(15.6), label: 'laptop ~15.6" · estimated' };
+  if (cssW >= 1280)                            return { ppi: calcPPI(13.3), label: 'laptop ~13" · estimated' };
+  return { ppi: 96, label: 'default 96 DPI' };
 }
 
 function getThickness() {
@@ -75,13 +161,14 @@ async function main() {
     document.getElementById('cal-card-bar').style.width = initial + 'px';
   }
 
-  // Load stored PPI or show calibration on first visit
+  // Load stored PPI, or auto-detect on first visit (no blocking overlay)
   const storedPPI   = localStorage.getItem('ruler-ppi');
   const storedLabel = localStorage.getItem('ruler-ppi-label');
   if (storedPPI) {
     applyPPI(parseFloat(storedPPI), storedLabel || '');
   } else {
-    showCalibration();
+    const detected = autoDetect();
+    applyPPI(detected.ppi, detected.label);
   }
 
   // ── Calibration: tabs ────────────────────────────────────────────────────
