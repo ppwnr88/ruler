@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruler — Screen Measurement Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Corner square -->
+    <div id="corner">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <line x1="4" y1="4" x2="24" y2="4" stroke="#C4A882" stroke-width="1.5"/>
+        <line x1="4" y1="4" x2="4" y2="24" stroke="#C4A882" stroke-width="1.5"/>
+        <line x1="4" y1="9"  x2="9"  y2="9"  stroke="#C4A882" stroke-width="1"/>
+        <line x1="4" y1="14" x2="11" y2="14" stroke="#C4A882" stroke-width="1"/>
+        <line x1="4" y1="19" x2="9"  y2="19" stroke="#C4A882" stroke-width="1"/>
+        <line x1="9"  y1="4" x2="9"  y2="9"  stroke="#C4A882" stroke-width="1"/>
+        <line x1="14" y1="4" x2="14" y2="11" stroke="#C4A882" stroke-width="1"/>
+        <line x1="19" y1="4" x2="19" y2="9"  stroke="#C4A882" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Horizontal ruler -->
+    <div id="h-ruler-wrap">
+      <canvas id="h-canvas"></canvas>
+    </div>
+
+    <!-- Vertical ruler -->
+    <div id="v-ruler-wrap">
+      <canvas id="v-canvas"></canvas>
+    </div>
+
+    <!-- Main canvas area -->
+    <div id="main-area">
+      <div id="crosshair-h"></div>
+      <div id="crosshair-v"></div>
+      <div id="readout">
+        X: <span id="readout-x">0.00</span>
+        &nbsp;Y: <span id="readout-y">0.00</span>
+        &nbsp;<span id="readout-unit">cm</span>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div id="toolbar">
+
+      <div class="tool-group">
+        <span class="label-inline">Unit</span>
+        <button id="btn-unit-px"  class="btn-tool"        title="Pixels  [P]">PX</button>
+        <button id="btn-unit-cm"  class="btn-tool active" title="Centimeters  [C]">CM</button>
+        <button id="btn-unit-in"  class="btn-tool"        title="Inches  [I]">IN</button>
+      </div>
+
+      <div class="tool-group frac-group" id="frac-group">
+        <span class="label-inline">Fractions</span>
+        <button id="btn-frac-8"  class="btn-tool active" title="1/8 inch">⅛</button>
+        <button id="btn-frac-16" class="btn-tool"        title="1/16 inch">¹⁄₁₆</button>
+        <button id="btn-frac-32" class="btn-tool"        title="1/32 inch">¹⁄₃₂</button>
+      </div>
+
+      <div class="tool-group">
+        <span class="label-inline">DPI</span>
+        <input id="ppi-input" type="number" value="96" min="50" max="400" step="1" title="Screen DPI / PPI">
+      </div>
+
+      <div class="tool-group">
+        <button id="btn-clear-markers" class="btn-tool" title="Clear all markers  [Del]">✕ Markers</button>
+      </div>
+
+      <div class="tool-group">
+        <span class="label-inline" style="font-size:10px;color:#8B7355">
+          [P/C/I] unit &nbsp;|&nbsp; click ruler = marker &nbsp;|&nbsp; scroll = pan
+        </span>
+      </div>
+
+      <div class="tool-group tool-brand">
+        <strong>📐</strong>&nbsp;ruler
+      </div>
+    </div>
+
+    <!-- Status / command bar -->
+    <div id="status-bar">
+      <span id="markers-info">Click on either ruler to place markers</span>
+      <div id="cmd-wrap">
+        <input id="cmd-input" type="text" placeholder="e.g. 5 cm" title="Convert units">
+        <button id="cmd-run">RUN</button>
+        <span id="cmd-result"></span>
+      </div>
+    </div>
+
+  </div>
+  <script type="module" src="bootstrap.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:ruler.now.sh)",
+      "WebFetch(domain:ruler.vercel.app)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ruler.now)",
+      "Bash(cargo --version)",
+      "Bash(wasm-pack --version)",
+      "Bash(curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf)",
+      "Bash(sh)",
+      "Bash(wasm-pack build:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)"
+    ]
+  }
+}
