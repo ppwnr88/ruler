@@ -1,13 +1,14 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
 
-// Earth tone palette
-const COLOR_TICK: &str = "#5C3D2E";
-const COLOR_TEXT: &str = "#3B1F0E";
-const COLOR_MARKER: &str = "#8B4513";
-const COLOR_CURSOR: &str = "#B5860D";
-const COLOR_BORDER: &str = "#7A5C3C";
-const COLOR_ZERO: &str = "#4A2810";
+// Piliapp-style ruler palette — khaki yellow body, black markings
+// Background sampled from piliapp default-lside.png (#F0E68C = CSS "khaki")
+const COLOR_TICK:   &str = "#333333";  // dark gray ticks (slightly softer than pure black)
+const COLOR_TEXT:   &str = "#111111";  // near-black labels
+const COLOR_MARKER: &str = "#CC2200";  // red marker line (stands out on yellow)
+const COLOR_CURSOR: &str = "#0055BB";  // blue cursor line
+const COLOR_BORDER: &str = "#BFB86A";  // muted golden border
+const COLOR_ZERO:   &str = "#000000";  // pure black for 0 origin line
 
 #[derive(Clone, Copy, PartialEq)]
 enum Orientation {
@@ -267,13 +268,14 @@ impl Ruler {
 
         ctx.clear_rect(0.0, 0.0, self.width, self.height);
 
-        // Gradient background: sand #D4B896 → dark tan #B5956E (24 slices)
+        // Gradient background: khaki #F5EE96 (top) → #E2D870 (bottom), 24 slices
+        // Base color sampled from piliapp ruler image: #F0E68C
         let steps = 24i32;
         for i in 0..steps {
             let frac = i as f64 / steps as f64;
-            let r = lerp(212.0, 181.0, frac) as u8;
-            let g = lerp(184.0, 149.0, frac) as u8;
-            let b = lerp(150.0, 110.0, frac) as u8;
+            let r = lerp(245.0, 226.0, frac) as u8;  // 0xF5 → 0xE2
+            let g = lerp(238.0, 216.0, frac) as u8;  // 0xEE → 0xD8
+            let b = lerp(150.0, 112.0, frac) as u8;  // 0x96 → 0x70
             ctx.set_fill_style_str(&format!("#{:02X}{:02X}{:02X}", r, g, b));
             let y0 = frac * t;
             let y1 = (frac + 1.0 / steps as f64) * t + 0.5;
@@ -339,7 +341,7 @@ impl Ruler {
         // Major ticks + labels
         {
             let font_size = (t * 0.195).clamp(8.0, 13.0) as i32;
-            ctx.set_font(&format!("{}px 'Courier New', monospace", font_size));
+            ctx.set_font(&format!("bold {}px Arial, Helvetica, sans-serif", font_size));
             ctx.set_text_align("left");
             ctx.set_text_baseline("top");
 
