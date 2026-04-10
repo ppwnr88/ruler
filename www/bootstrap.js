@@ -1,6 +1,8 @@
 import init, { Ruler } from './pkg/ruler.js';
 
-const THICKNESS = 80;
+function getThickness() {
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--thickness')) || 80;
+}
 
 async function main() {
   await init();
@@ -18,21 +20,26 @@ async function main() {
 
   // ── Sizing ──────────────────────────────────────────────────────────────
   function resize() {
+    const t        = getThickness();
     const toolbarH = document.getElementById('toolbar').offsetHeight;
     const statusH  = document.getElementById('status-bar').offsetHeight;
     const totalH   = window.innerHeight - toolbarH - statusH;
     const totalW   = window.innerWidth;
 
-    const rulerW = totalW - THICKNESS;
-    const rulerH = totalH - THICKNESS;
+    const rulerW = Math.max(1, totalW - t);
+    const rulerH = Math.max(1, totalH - t);
+
+    // Sync CSS grid to actual computed thickness
+    document.getElementById('app').style.gridTemplateColumns = `${t}px 1fr`;
+    document.getElementById('app').style.gridTemplateRows    = `${t}px 1fr auto auto`;
 
     hCanvas.width  = rulerW;
-    hCanvas.height = THICKNESS;
-    hRuler.resize(rulerW, THICKNESS);
+    hCanvas.height = t;
+    hRuler.resize(rulerW, t);
 
-    vCanvas.width  = THICKNESS;
+    vCanvas.width  = t;
     vCanvas.height = rulerH;
-    vRuler.resize(THICKNESS, rulerH);
+    vRuler.resize(t, rulerH);
   }
 
   resize();
@@ -115,6 +122,72 @@ async function main() {
   });
 
   window.addEventListener('mouseup', () => { drag = null; });
+
+  // ── Touch: pan rulers + tap to place markers ─────────────────────────────
+  let touch = null;
+
+  function rulerTouchStart(e, ruler, axis) {
+    e.preventDefault();
+    const t = e.touches[0];
+    touch = {
+      ruler,
+      axis,
+      startPx:     axis === 'x' ? t.clientX : t.clientY,
+      startOffset: ruler.get_offset(),
+      startTime:   Date.now(),
+      moved:       false,
+      elem:        e.currentTarget,
+    };
+  }
+
+  function rulerTouchMove(e) {
+    e.preventDefault();
+    if (!touch) return;
+    const t   = e.touches[0];
+    const cur = touch.axis === 'x' ? t.clientX : t.clientY;
+    const d   = cur - touch.startPx;
+    if (Math.abs(d) > 4) touch.moved = true;
+    touch.ruler.set_offset(touch.startOffset + d);
+  }
+
+  function rulerTouchEnd(e) {
+    if (!touch) return;
+    if (!touch.moved) {
+      // Tap → toggle marker
+      const ct   = e.changedTouches[0];
+      const rect = touch.elem.getBoundingClientRect();
+      const pos  = touch.axis === 'x' ? ct.clientX - rect.left : ct.clientY - rect.top;
+      touch.ruler.toggle_marker(pos);
+      refreshMarkers();
+    }
+    touch = null;
+  }
+
+  hCanvas.addEventListener('touchstart', (e) => rulerTouchStart(e, hRuler, 'x'), { passive: false });
+  vCanvas.addEventListener('touchstart', (e) => rulerTouchStart(e, vRuler, 'y'), { passive: false });
+  hCanvas.addEventListener('touchmove',  rulerTouchMove, { passive: false });
+  vCanvas.addEventListener('touchmove',  rulerTouchMove, { passive: false });
+  hCanvas.addEventListener('touchend',   rulerTouchEnd);
+  vCanvas.addEventListener('touchend',   rulerTouchEnd);
+
+  // Touch on main area → update cursor readout + crosshair
+  mainArea.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const t    = e.touches[0];
+    const rect = mainArea.getBoundingClientRect();
+    const x    = t.clientX - rect.left;
+    const y    = t.clientY - rect.top;
+    hRuler.set_cursor(x);
+    vRuler.set_cursor(y);
+    crossH.style.top  = y + 'px';
+    crossV.style.left = x + 'px';
+    updateReadout(x, y);
+  }, { passive: false });
+
+  mainArea.addEventListener('touchend', () => {
+    hRuler.hide_cursor();
+    vRuler.hide_cursor();
+  });
 
   // ── Keyboard shortcuts ────────────────────────────────────────────────────
   document.addEventListener('keydown', (e) => {
@@ -208,7 +281,7 @@ async function main() {
     let info = '';
     if (hVals.length) info += 'H markers: ' + hVals.join(', ');
     if (vVals.length) { if (info) info += '  |  '; info += 'V markers: ' + vVals.join(', '); }
-    if (!info) info = 'Click on either ruler to place markers';
+    if (!info) info = 'Tap or click a ruler to place markers';
 
     document.getElementById('markers-info').textContent = info;
   }
