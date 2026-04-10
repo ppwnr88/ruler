@@ -1,0 +1,15 @@
+{
+  "name": "ruler",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "ruler_bg.wasm",
+    "ruler.js",
+    "ruler.d.ts"
+  ],
+  "main": "ruler.js",
+  "types": "ruler.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

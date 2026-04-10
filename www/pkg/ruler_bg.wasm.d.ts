@@ -1,0 +1,36 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const __wbg_ruler_free: (a: number, b: number) => void;
+export const ruler_clear_markers: (a: number) => void;
+export const ruler_draw: (a: number) => void;
+export const ruler_get_marker_count: (a: number) => number;
+export const ruler_get_marker_values: (a: number) => [number, number];
+export const ruler_get_offset: (a: number) => number;
+export const ruler_get_ppi: (a: number) => number;
+export const ruler_get_thickness: (a: number) => number;
+export const ruler_get_unit: (a: number) => [number, number];
+export const ruler_get_value_at: (a: number, b: number) => number;
+export const ruler_hide_cursor: (a: number) => void;
+export const ruler_is_horizontal: (a: number) => number;
+export const ruler_new: (a: number, b: number) => [number, number, number];
+export const ruler_parse_command: (a: number, b: number, c: number) => [number, number];
+export const ruler_resize: (a: number, b: number, c: number) => void;
+export const ruler_scroll: (a: number, b: number) => void;
+export const ruler_set_cursor: (a: number, b: number) => void;
+export const ruler_set_fraction_denom: (a: number, b: number) => void;
+export const ruler_set_horizontal: (a: number) => void;
+export const ruler_set_offset: (a: number, b: number) => void;
+export const ruler_set_ppi: (a: number, b: number) => void;
+export const ruler_set_thickness: (a: number, b: number) => void;
+export const ruler_set_unit: (a: number, b: number, c: number) => void;
+export const ruler_set_vertical: (a: number) => void;
+export const ruler_toggle_marker: (a: number, b: number) => number;
+export const __externref_table_alloc: () => number;
+export const __wbindgen_externrefs: WebAssembly.Table;
+export const __wbindgen_free: (a: number, b: number, c: number) => void;
+export const __wbindgen_exn_store: (a: number) => void;
+export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+export const __externref_table_dealloc: (a: number) => void;
+export const __wbindgen_start: () => void;
