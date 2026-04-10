@@ -269,6 +269,220 @@ html, body {
   min-width: 160px;
 }
 
+/* ─── PPI badge ─── */
+.ppi-badge {
+  font-size: 11px;
+  color: var(--ochre);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* ─── Calibration overlay ─── */
+#cal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(10, 5, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+#cal-overlay.hidden { display: none; }
+
+#cal-dialog {
+  background: var(--toolbar-bg);
+  border: 1px solid var(--brown-mid);
+  border-radius: 8px;
+  padding: 24px 28px 20px;
+  width: min(480px, 94vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  color: var(--cream);
+  font-family: 'Courier New', monospace;
+}
+
+#cal-dialog h2 {
+  font-size: 17px;
+  color: var(--sand);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+.cal-sub {
+  font-size: 12px;
+  color: var(--tan);
+  margin-bottom: 16px;
+}
+.cal-hint {
+  font-size: 11px;
+  color: var(--brown-mid);
+  margin-top: 8px;
+}
+.cal-hint.hidden { display: none; }
+
+/* Tabs */
+#cal-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.cal-tab {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px 3px 0 0;
+  color: var(--tan);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  transition: background 0.1s, color 0.1s;
+}
+.cal-tab.active {
+  background: var(--saddle);
+  border-color: var(--ochre);
+  color: var(--cream);
+}
+
+/* Tab panels */
+.cal-panel { display: block; }
+.cal-panel.hidden { display: none; }
+
+/* Presets */
+.preset-category {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+.preset-cat-label {
+  font-size: 10px;
+  color: var(--brown-mid);
+  width: 46px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.btn-preset {
+  background: var(--panel-bg);
+  color: var(--cream);
+  border: 1px solid var(--brown-mid);
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  transition: background 0.1s, border-color 0.1s;
+}
+.btn-preset:hover, .btn-preset.selected {
+  background: var(--saddle);
+  border-color: var(--ochre);
+  color: var(--cream);
+}
+
+/* Custom size tab */
+.cal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+#cal-custom-in {
+  width: 90px;
+  background: var(--panel-bg);
+  color: var(--cream);
+  border: 1px solid var(--brown-mid);
+  border-radius: 3px;
+  padding: 5px 8px;
+  font-family: inherit;
+  font-size: 13px;
+}
+#cal-custom-in:focus { outline: none; border-color: var(--ochre); }
+.cal-unit-label {
+  font-size: 12px;
+  color: var(--tan);
+}
+#btn-cal-custom, #btn-cal-card {
+  background: var(--saddle);
+  color: var(--cream);
+  border: 1px solid var(--ochre);
+  border-radius: 3px;
+  padding: 5px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+}
+#btn-cal-custom:hover, #btn-cal-card:hover {
+  background: var(--ochre);
+  color: var(--espresso);
+}
+
+/* Credit card calibrator */
+#cal-card-wrap {
+  margin: 14px 0 10px;
+  overflow: hidden;
+  user-select: none;
+}
+#cal-card-bar {
+  position: relative;
+  height: 54px;
+  background: linear-gradient(135deg, var(--tan), var(--tan-dark));
+  border: 1px solid var(--brown-mid);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ew-resize;
+  min-width: 60px;
+  max-width: 100%;
+  touch-action: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.cal-card-label {
+  font-size: 11px;
+  color: var(--espresso);
+  pointer-events: none;
+  letter-spacing: 0.04em;
+}
+#cal-card-handle {
+  position: absolute;
+  right: 0;
+  top: 0; bottom: 0;
+  width: 20px;
+  background: var(--saddle);
+  border-radius: 0 5px 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--cream);
+  cursor: ew-resize;
+  user-select: none;
+}
+
+/* Computed result */
+#cal-computed {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--ochre);
+}
+
+/* Skip button */
+.btn-cal-skip {
+  display: block;
+  margin-top: 16px;
+  background: none;
+  border: none;
+  color: var(--brown-mid);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  text-decoration: underline;
+}
+.btn-cal-skip:hover { color: var(--tan); }
+
 /* ─── Fraction group visibility ─── */
 .frac-group {
   display: none;
@@ -292,7 +506,7 @@ html, body {
   }
   /* Hide hint text and brand on small screens */
   .tool-brand,
-  .label-inline[style*="font-size:10px"] {
+  .hint-group {
     display: none;
   }
   .btn-tool {

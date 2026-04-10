@@ -3,10 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ruler — Screen Measurement Tool</title>
+  <title>Ruler — Actual Size Screen Ruler</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <!-- ── Calibration overlay ────────────────────────────────────────────── -->
+  <div id="cal-overlay" class="hidden">
+    <div id="cal-dialog">
+      <h2>📐 Set Screen Size</h2>
+      <p class="cal-sub">Select your screen so the ruler shows actual physical size.</p>
+
+      <!-- Tab switcher -->
+      <div id="cal-tabs">
+        <button class="cal-tab active" data-tab="presets">Presets</button>
+        <button class="cal-tab" data-tab="custom">Custom size</button>
+        <button class="cal-tab" data-tab="card">Credit card</button>
+      </div>
+
+      <!-- Tab: Presets -->
+      <div id="tab-presets" class="cal-panel">
+        <div class="preset-category">
+          <span class="preset-cat-label">Phone</span>
+          <button class="btn-preset" data-inches="4.7">4.7"</button>
+          <button class="btn-preset" data-inches="5.4">5.4"</button>
+          <button class="btn-preset" data-inches="6.1">6.1"</button>
+          <button class="btn-preset" data-inches="6.7">6.7"</button>
+        </div>
+        <div class="preset-category">
+          <span class="preset-cat-label">Tablet</span>
+          <button class="btn-preset" data-inches="8.3">8.3"</button>
+          <button class="btn-preset" data-inches="10.9">10.9"</button>
+          <button class="btn-preset" data-inches="11">11"</button>
+          <button class="btn-preset" data-inches="12.9">12.9"</button>
+        </div>
+        <div class="preset-category">
+          <span class="preset-cat-label">Laptop</span>
+          <button class="btn-preset" data-inches="11">11"</button>
+          <button class="btn-preset" data-inches="13">13"</button>
+          <button class="btn-preset" data-inches="13.3">13.3"</button>
+          <button class="btn-preset" data-inches="14">14"</button>
+          <button class="btn-preset" data-inches="15.6">15.6"</button>
+          <button class="btn-preset" data-inches="16">16"</button>
+        </div>
+        <div class="preset-category">
+          <span class="preset-cat-label">Monitor</span>
+          <button class="btn-preset" data-inches="21.5">21.5"</button>
+          <button class="btn-preset" data-inches="24">24"</button>
+          <button class="btn-preset" data-inches="27">27"</button>
+          <button class="btn-preset" data-inches="32">32"</button>
+          <button class="btn-preset" data-inches="34">34"</button>
+        </div>
+      </div>
+
+      <!-- Tab: Custom inches -->
+      <div id="tab-custom" class="cal-panel hidden">
+        <p>Enter your screen's diagonal size:</p>
+        <div class="cal-row">
+          <input id="cal-custom-in" type="number" placeholder="e.g. 15.6" min="3" max="120" step="0.1">
+          <span class="cal-unit-label">inches</span>
+          <button id="btn-cal-custom">Apply</button>
+        </div>
+        <p class="cal-hint">Measured corner to corner, not including bezel.</p>
+      </div>
+
+      <!-- Tab: Credit card calibration -->
+      <div id="tab-card" class="cal-panel hidden">
+        <p>Drag the right edge until it matches your credit card width&nbsp;(85.6 mm).</p>
+        <div id="cal-card-wrap">
+          <div id="cal-card-bar">
+            <span class="cal-card-label">Credit card — 85.6 mm</span>
+            <div id="cal-card-handle" title="Drag to resize">⟺</div>
+          </div>
+        </div>
+        <button id="btn-cal-card">This matches my card ✓</button>
+      </div>
+
+      <p id="cal-computed" class="cal-hint hidden"></p>
+      <button id="btn-cal-skip" class="btn-cal-skip">Skip (use 96 DPI default)</button>
+    </div>
+  </div>
+
+  <!-- ── Main app ────────────────────────────────────────────────────────── -->
   <div id="app">
 
     <!-- Corner square -->
@@ -62,15 +140,15 @@
       </div>
 
       <div class="tool-group">
-        <span class="label-inline">DPI</span>
-        <input id="ppi-input" type="number" value="96" min="50" max="400" step="1" title="Screen DPI / PPI">
+        <button id="btn-recalibrate" class="btn-tool" title="Set screen size for accurate measurements">⊙ Calibrate</button>
+        <span id="ppi-badge" class="ppi-badge" title="Current DPI">— DPI</span>
       </div>
 
       <div class="tool-group">
         <button id="btn-clear-markers" class="btn-tool" title="Clear all markers  [Del]">✕ Markers</button>
       </div>
 
-      <div class="tool-group">
+      <div class="tool-group hint-group">
         <span class="label-inline" style="font-size:10px;color:#8B7355">
           [P/C/I] unit &nbsp;|&nbsp; click ruler = marker &nbsp;|&nbsp; scroll = pan
         </span>
@@ -83,7 +161,7 @@
 
     <!-- Status / command bar -->
     <div id="status-bar">
-      <span id="markers-info">Click on either ruler to place markers</span>
+      <span id="markers-info">Tap or click a ruler to place markers</span>
       <div id="cmd-wrap">
         <input id="cmd-input" type="text" placeholder="e.g. 5 cm" title="Convert units">
         <button id="cmd-run">RUN</button>
