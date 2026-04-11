@@ -340,7 +340,7 @@ impl Ruler {
 
         // Major ticks + labels
         {
-            let font_size = (t * 0.195).clamp(8.0, 13.0) as i32;
+            let font_size = (t * 0.32).clamp(11.0, 20.0) as i32;
             ctx.set_font(&format!("bold {}px Arial, Helvetica, sans-serif", font_size));
             ctx.set_text_align("left");
             ctx.set_text_baseline("top");
