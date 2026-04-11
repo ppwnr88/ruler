@@ -41,7 +41,9 @@ html, body {
   grid-template-columns: var(--thickness) 1fr;
   grid-template-rows: var(--thickness) 1fr auto auto;
   width: 100vw;
-  height: 100vh;
+  height: 100vh;       /* fallback for browsers without dvh */
+  height: 100dvh;      /* dynamic: shrinks when mobile browser chrome is visible */
+  min-height: 0;       /* prevent grid blowout */
 }
 
 /* ─── Corner square — matches ruler yellow ─── */
@@ -81,6 +83,7 @@ html, body {
 #main-area {
   grid-column: 2;
   grid-row: 2;
+  min-height: 0;       /* allow 1fr row to shrink if needed */
   position: relative;
   cursor: crosshair;
   background: var(--page-bg);
