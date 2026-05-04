@@ -1,14 +1,12 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
 
-// Piliapp-style ruler palette — khaki yellow body, black markings
-// Background sampled from piliapp default-lside.png (#F0E68C = CSS "khaki")
-const COLOR_TICK:   &str = "#333333";  // dark gray ticks (slightly softer than pure black)
-const COLOR_TEXT:   &str = "#111111";  // near-black labels
-const COLOR_MARKER: &str = "#CC2200";  // red marker line (stands out on yellow)
-const COLOR_CURSOR: &str = "#0055BB";  // blue cursor line
-const COLOR_BORDER: &str = "#BFB86A";  // muted golden border
-const COLOR_ZERO:   &str = "#000000";  // pure black for 0 origin line
+const COLOR_TICK:   &str = "#96A2B1";
+const COLOR_TEXT:   &str = "#D7DEE8";
+const COLOR_MARKER: &str = "#FF5C57";
+const COLOR_CURSOR: &str = "#57C7FF";
+const COLOR_BORDER: &str = "#2C3744";
+const COLOR_ZERO:   &str = "#5AF78E";
 
 #[derive(Clone, Copy, PartialEq)]
 enum Orientation {
@@ -268,14 +266,12 @@ impl Ruler {
 
         ctx.clear_rect(0.0, 0.0, self.width, self.height);
 
-        // Gradient background: khaki #F5EE96 (top) → #E2D870 (bottom), 24 slices
-        // Base color sampled from piliapp ruler image: #F0E68C
         let steps = 24i32;
         for i in 0..steps {
             let frac = i as f64 / steps as f64;
-            let r = lerp(245.0, 226.0, frac) as u8;  // 0xF5 → 0xE2
-            let g = lerp(238.0, 216.0, frac) as u8;  // 0xEE → 0xD8
-            let b = lerp(150.0, 112.0, frac) as u8;  // 0x96 → 0x70
+            let r = lerp(27.0, 14.0, frac) as u8;
+            let g = lerp(35.0, 20.0, frac) as u8;
+            let b = lerp(45.0, 26.0, frac) as u8;
             ctx.set_fill_style_str(&format!("#{:02X}{:02X}{:02X}", r, g, b));
             let y0 = frac * t;
             let y1 = (frac + 1.0 / steps as f64) * t + 0.5;

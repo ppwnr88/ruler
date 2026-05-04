@@ -448,5 +448,5 @@ async function main() {
 }
 
 main().catch(err => {
-  document.body.innerHTML = `<pre style="color:#B5860D;padding:2em">Failed to load WASM.\n\n${err}\n\nRun: wasm-pack build --target web --out-dir www/pkg</pre>`;
+  document.body.innerHTML = `<pre style="color:#5AF78E;background:#0A0D10;min-height:100vh;margin:0;padding:2em">Failed to load WASM.\n\n${err}\n\nRun: wasm-pack build --target web --out-dir www/pkg</pre>`;
 });
